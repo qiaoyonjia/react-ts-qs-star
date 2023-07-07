@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import styles from "./QuestionCard.module.scss";
 import { Button, Space, Divider, Tag, Popconfirm, Modal, message } from "antd";
 import {

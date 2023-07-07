@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import styles from "./Userinfo.module.scss";
+import { FC } from "react";
+// import styles from "./Userinfo.module.scss";
 import { Link } from "react-router-dom";
 import { LOGIN_PATHNAME } from "../router";
 

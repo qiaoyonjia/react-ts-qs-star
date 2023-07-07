@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import styles from "./Logo.module.scss";
 import { Space, Typography } from "antd";
 import { Link } from "react-router-dom";

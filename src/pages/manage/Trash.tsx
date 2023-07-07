@@ -1,5 +1,5 @@
-import React, { FC, useState } from "react";
-import QuestionCard from "../../components/QuestionCard";
+import { FC, useState } from "react";
+// import QuestionCard from "../../components/QuestionCard";
 import styles from "./common.module.scss";
 import { useTitle } from "ahooks";
 import {
@@ -11,51 +11,21 @@ import {
   Space,
   Modal,
   message,
+  Spin,
 } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import ListSearch from "../../components/ListSearch";
+import useLoadQuestionListData from "../../hooks/useLoadQuestionDataList";
 
 const { Title } = Typography;
 
 const { confirm } = Modal;
 
-const rawQuestionList = [
-  {
-    _id: "q1",
-    title: "问卷1",
-    isPublished: true,
-    isStar: false,
-    answerCount: 5,
-    createdAt: "3月10日 13:23",
-  },
-  {
-    _id: "q2",
-    title: "问卷2",
-    isPublished: false,
-    isStar: true,
-    answerCount: 3,
-    createdAt: "3月12日 13:23",
-  },
-  {
-    _id: "q3",
-    title: "问卷3",
-    isPublished: true,
-    isStar: false,
-    answerCount: 2,
-    createdAt: "3月13日 13:23",
-  },
-  {
-    _id: "q4",
-    title: "问卷4",
-    isPublished: false,
-    isStar: false,
-    answerCount: 10,
-    createdAt: "3月14日 13:23",
-  },
-];
-
 const Trash: FC = () => {
   useTitle("问卷驿站 — 回收站");
-  const [questionList, setQuestionList] = useState(rawQuestionList);
+
+  const { data = {}, loading } = useLoadQuestionListData({ isDeleted: true });
+  const { list = [], total = 0 } = data;
 
   // 记录选中的id
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -112,7 +82,7 @@ const Trash: FC = () => {
         </Space>
       </div>
       <Table
-        dataSource={questionList}
+        dataSource={list}
         columns={tableColumns}
         pagination={false}
         rowKey={(q) => q._id}
@@ -132,12 +102,19 @@ const Trash: FC = () => {
         <div className={styles.left}>
           <Title level={3}>回收站</Title>
         </div>
-        <div className={styles.right}>(搜索)</div>
+        <div className={styles.right}>
+          <ListSearch />
+        </div>
       </div>
       <div className={styles.content}>
+        {loading && (
+          <div style={{ textAlign: "center" }}>
+            <Spin />
+          </div>
+        )}
         {/* 星标问卷 */}
-        {questionList.length === 0 && <Empty description="暂无数据" />}
-        {questionList.length > 0 && TableElem}
+        {!loading && list.length === 0 && <Empty description="暂无数据" />}
+        {list.length > 0 && TableElem}
       </div>
       <div className={styles.footer}>loadMore... 上滑加载更多...</div>
     </>

@@ -1,7 +1,6 @@
 import { FC, useState } from "react";
-// import QuestionCard from "../../components/QuestionCard";
 import styles from "./common.module.scss";
-import { useTitle } from "ahooks";
+import { useTitle, useRequest } from "ahooks";
 import {
   Typography,
   Empty,
@@ -16,6 +15,11 @@ import {
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ListSearch from "../../components/ListSearch";
 import useLoadQuestionListData from "../../hooks/useLoadQuestionDataList";
+import ListPage from "../../components/ListPage";
+import {
+  updateQuestionService,
+  deleteQuestionService,
+} from "../../services/question";
 
 const { Title } = Typography;
 
@@ -24,7 +28,11 @@ const { confirm } = Modal;
 const Trash: FC = () => {
   useTitle("问卷驿站 — 回收站");
 
-  const { data = {}, loading } = useLoadQuestionListData({ isDeleted: true });
+  const {
+    data = {},
+    loading,
+    refresh,
+  } = useLoadQuestionListData({ isDeleted: true });
   const { list = [], total = 0 } = data;
 
   // 记录选中的id
@@ -57,6 +65,39 @@ const Trash: FC = () => {
     },
   ];
 
+  // 恢复
+  const { run: recover } = useRequest(
+    async () => {
+      for await (const id of selectedIds) {
+        await updateQuestionService(id, { isDeleted: false });
+      }
+    },
+    {
+      manual: true,
+      debounceWait: 500, // 防抖
+      onSuccess() {
+        message.success("恢复成功");
+        refresh();
+        setSelectedIds([]);
+      },
+    }
+  );
+
+  // 删除
+  const { run: deleteQuestion } = useRequest(
+    async () => {
+      await deleteQuestionService(selectedIds);
+    },
+    {
+      manual: true,
+      onSuccess() {
+        message.success("删除成功");
+        refresh();
+        setSelectedIds([]);
+      },
+    }
+  );
+
   function del() {
     confirm({
       title: "确定彻底删除该问卷？",
@@ -64,7 +105,7 @@ const Trash: FC = () => {
       content: "注意！删除之后不可以找回",
       okText: "确认",
       cancelText: "取消",
-      onOk: () => message.success("删除成功"),
+      onOk: deleteQuestion,
     });
   }
 
@@ -73,7 +114,11 @@ const Trash: FC = () => {
     <>
       <div style={{ marginBottom: "16px" }}>
         <Space>
-          <Button type="primary" disabled={selectedIds.length === 0}>
+          <Button
+            type="primary"
+            disabled={selectedIds.length === 0}
+            onClick={recover}
+          >
             恢复
           </Button>
           <Button danger onClick={del} disabled={selectedIds.length === 0}>
@@ -116,7 +161,9 @@ const Trash: FC = () => {
         {!loading && list.length === 0 && <Empty description="暂无数据" />}
         {list.length > 0 && TableElem}
       </div>
-      <div className={styles.footer}>loadMore... 上滑加载更多...</div>
+      <div className={styles.footer}>
+        <ListPage total={total} />
+      </div>
     </>
   );
 };

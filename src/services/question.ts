@@ -31,3 +31,31 @@ export async function getQuestionListService(
   const data = (await axios.get(url, { params: opt })) as ResDateType;
   return data;
 }
+
+// 更新单个问卷
+export async function updateQuestionService(
+  id: string,
+  opt: { [key: string]: any }
+): Promise<ResDateType> {
+  const url = `/api/question/${id}`;
+  const data = (await axios.patch(url, opt)) as ResDateType;
+  return data;
+}
+
+// 复制问卷
+export async function duplicateQuestionService(
+  id: string
+): Promise<ResDateType> {
+  const url = `/api/question/duplicate/${id}`;
+  const data = (await axios.post(url)) as ResDateType;
+  return data;
+}
+
+// 批量彻底删除
+export async function deleteQuestionService(
+  ids: string[]
+): Promise<ResDateType> {
+  const url = `/api/question`;
+  const data = (await axios.delete(url, { data: { ids } })) as ResDateType;
+  return data;
+}

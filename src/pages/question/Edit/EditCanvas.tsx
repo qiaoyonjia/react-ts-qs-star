@@ -27,6 +27,7 @@ function genComponent(componentInfo: ComponentInfoType) {
 
 const EditCanvas: FC<PropsType> = ({ loading }) => {
   const { componentList, selectedId } = useGetComponentInfo();
+
   const dispatch = useDispatch();
 
   function handleClick(event: MouseEvent, id: string) {
@@ -44,39 +45,33 @@ const EditCanvas: FC<PropsType> = ({ loading }) => {
 
   return (
     <div className={styles.canvas}>
-      {componentList.map((c) => {
-        const { fe_id } = c;
+      {componentList
+        .filter((c) => c.isHidden)
+        .map((c) => {
+          const { fe_id, isLocked } = c;
 
-        // 拼接 class name
-        const wrapperDefaultClassName = styles["component-wrapper"];
-        const selectedClassName = styles.selected;
-        const wrapperClassName = classNames({
-          [wrapperDefaultClassName]: true,
-          [selectedClassName]: fe_id === selectedId, // 根据fe_id === selectedId判断
-        });
+          // 拼接 class name
+          const wrapperDefaultClassName = styles["component-wrapper"];
+          const selectedClassName = styles.selected;
+          const lockedClassName = styles.locked;
+          const wrapperClassName = classNames({
+            [wrapperDefaultClassName]: true,
+            [selectedClassName]: fe_id === selectedId, // 根据fe_id === selectedId判断
+            [lockedClassName]: isLocked,
+          });
 
-        return (
-          <div
-            key={fe_id}
-            className={wrapperClassName}
-            onClick={(e) => {
-              handleClick(e, fe_id);
-            }}
-          >
-            <div className={styles.component}>{genComponent(c)}</div>
-          </div>
-        );
-      })}
-      {/* <div className={styles["component-wrapper"]}>
-        <div className={styles.component}>
-          <QuestionTitle />
-        </div>
-      </div>
-      <div className={styles["component-wrapper"]}>
-        <div className={styles.component}>
-          <QuestionInput />
-        </div>
-      </div> */}
+          return (
+            <div
+              key={fe_id}
+              className={wrapperClassName}
+              onClick={(e) => {
+                handleClick(e, fe_id);
+              }}
+            >
+              <div className={styles.component}>{genComponent(c)}</div>
+            </div>
+          );
+        })}
     </div>
   );
 };

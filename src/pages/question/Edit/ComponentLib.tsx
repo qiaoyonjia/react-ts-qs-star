@@ -17,6 +17,7 @@ function genComponent(c: ComponentConfType) {
   const dispatch = useDispatch();
 
   function handleClick() {
+    // TODO 新建组件有问题
     dispatch(
       addComponent({
         fe_id: nanoid(), // 前端生成的id

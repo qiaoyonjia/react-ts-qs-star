@@ -33,7 +33,9 @@ function useLoadQuestionData() {
     }
 
     // 把componentList 存储到 redux store中
-    dispatch(resetComponents({ componentList, selectedId }));
+    dispatch(
+      resetComponents({ componentList, selectedId, copiedComponent: null })
+    );
   }, [data]);
 
   // 判断id变化，执行ajax加载问卷数据

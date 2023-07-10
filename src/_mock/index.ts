@@ -1,10 +1,10 @@
-import Mock from "mockjs";
+import Mock from 'mockjs'
 
-Mock.mock("/api/test", "get", () => {
+Mock.mock('/api/test', 'get', () => {
   return {
     errno: 0,
     data: {
-      name: `闫 ${Date.now()}`,
+      name: `双越老师 ${Date.now()}`,
     },
-  };
-});
+  }
+})

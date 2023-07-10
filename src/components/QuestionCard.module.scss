@@ -1,41 +1,41 @@
 .container {
-  margin-bottom: 20px;
-  padding: 12px;
-  border-radius: 3px;
-  background-color: #fff;
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 3px;
+    background-color: #fff;
 
-  &:hover {
-    box-shadow: 0 4px 10px #e8e8e8;
-  }
+    &:hover {
+        box-shadow: 0 4px 10px #e8e8e8;
+    }
 }
 
 .title {
-  display: flex;
+    display: flex;
 
-  .left {
-    flex: 1;
-  }
+    .left {
+        flex: 1;
+    }
 
-  .right {
-    flex: 1;
-    text-align: right;
-    font-size: 12px;
-  }
+    .right {
+        flex: 1;
+        text-align: right;
+        font-size: 12px;
+    }
 }
 
 .button-container {
-  display: flex;
+    display: flex;
 
-  .left {
-    flex: 1;
-  }
-
-  .right {
-    flex: 1;
-    text-align: right;
-
-    button {
-      color: #999;
+    .left {
+        flex: 1;
     }
-  }
+
+    .right {
+        flex: 1;
+        text-align: right;
+
+        button {
+            color: #999
+        }
+    }
 }

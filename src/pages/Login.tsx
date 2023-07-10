@@ -1,69 +1,73 @@
-import { FC, useEffect } from "react";
-import {
-  Typography,
-  Space,
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  message,
-} from "antd";
-import { UserAddOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
-import styles from "./Login.module.scss";
-import { REGISTER_PATHNAME } from "../router";
-import {
-  rememberUser,
-  deleteUserFromStorage,
-  getUserInfoFromStorage,
-  setToken,
-} from "../utils/cache";
-import { MANAGE_INDEX_PATHNAME } from "../router";
-import { loginService } from "../services/user";
-import { useRequest } from "ahooks";
+import React, { FC, useEffect } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Typography, Space, Form, Input, Button, Checkbox, message } from 'antd'
+import { UserAddOutlined } from '@ant-design/icons'
+import { useRequest } from 'ahooks'
+import { REGISTER_PATHNAME, MANAGE_INDEX_PATHNAME } from '../router'
+import { loginService } from '../services/user'
+import { setToken } from '../utils/user-token'
+import styles from './Login.module.scss'
 
-const { Title } = Typography;
+const { Title } = Typography
+
+const USERNAME_KEY = 'USERNAME'
+const PASSWORD_KEY = 'PASSWORD'
+
+function rememberUser(username: string, password: string) {
+  localStorage.setItem(USERNAME_KEY, username)
+  localStorage.setItem(PASSWORD_KEY, password)
+}
+
+function deleteUserFromStorage() {
+  localStorage.removeItem(USERNAME_KEY)
+  localStorage.removeItem(PASSWORD_KEY)
+}
+
+function getUserInfoFromStorage() {
+  return {
+    username: localStorage.getItem(USERNAME_KEY),
+    password: localStorage.getItem(PASSWORD_KEY),
+  }
+}
 
 const Login: FC = () => {
-  // const nav = useNavigate();
+  const nav = useNavigate()
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm() // 第三方 hook
 
   useEffect(() => {
-    const { username, password } = getUserInfoFromStorage();
-    form.setFieldsValue({ username, password });
-  }, []);
+    const { username, password } = getUserInfoFromStorage()
+    form.setFieldsValue({ username, password })
+  }, [])
 
-  const nav = useNavigate();
-
-  const { run: login } = useRequest(
-    async (username, password) => {
-      const data = await loginService(username, password);
-      return data;
+  const { run } = useRequest(
+    async (username: string, password: string) => {
+      const data = await loginService(username, password)
+      return data
     },
     {
       manual: true,
       onSuccess(result) {
-        const { token = "" } = result;
-        // 存储token
-        setToken(token);
-        message.success("登录成功");
-        nav(MANAGE_INDEX_PATHNAME);
+        const { token = '' } = result
+        setToken(token) // 存储 token
+
+        message.success('登录成功')
+        nav(MANAGE_INDEX_PATHNAME) // 导航到“我的问卷”
       },
     }
-  );
+  )
 
   const onFinish = (values: any) => {
-    const { username, password, remember } = values;
+    const { username, password, remember } = values || {}
 
-    login(username, password);
+    run(username, password) // 执行 ajax
 
     if (remember) {
-      rememberUser(username, password);
+      rememberUser(username, password)
     } else {
-      deleteUserFromStorage();
+      deleteUserFromStorage()
     }
-  };
+  }
 
   return (
     <div className={styles.container}>
@@ -79,25 +83,17 @@ const Login: FC = () => {
         <Form
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
-          onFinish={onFinish}
           initialValues={{ remember: true }}
+          onFinish={onFinish}
           form={form}
         >
           <Form.Item
             label="用户名"
             name="username"
             rules={[
-              { required: true, message: "请输入用户名" },
-              {
-                type: "string",
-                min: 5,
-                max: 20,
-                message: "字符长度在5-20之间",
-              },
-              {
-                pattern: /^\w+$/,
-                message: "只能是字母数字下划线",
-              },
+              { required: true, message: '请输入用户名' },
+              { type: 'string', min: 5, max: 20, message: '字符长度在 5-20 之间' },
+              { pattern: /^\w+$/, message: '只能是字母数字下划线' },
             ]}
           >
             <Input />
@@ -105,16 +101,12 @@ const Login: FC = () => {
           <Form.Item
             label="密码"
             name="password"
-            rules={[{ required: true, message: "请输入密码" }]}
+            rules={[{ required: true, message: '请输入密码' }]}
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item
-            name="remember"
-            valuePropName="checked"
-            wrapperCol={{ offset: 6, span: 16 }}
-          >
-            <Checkbox>记住密码</Checkbox>
+          <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 6, span: 16 }}>
+            <Checkbox>记住我</Checkbox>
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
             <Space>
@@ -127,7 +119,7 @@ const Login: FC = () => {
         </Form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

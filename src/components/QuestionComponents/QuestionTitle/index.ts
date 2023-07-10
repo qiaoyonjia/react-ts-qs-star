@@ -1,17 +1,19 @@
 /**
- * 问卷的输入框
+ * @description 问卷 标题
+ * @author 双越老师
  */
 
-import Component from "./Component";
-import PropComponent from "./PropComponent";
-import { QuestionTitleDefaultProps } from "./interface";
+import Component from './Component'
+import PropComponent from './PropComponent'
+import { QuestionTitleDefaultProps } from './interface'
 
-export * from "./interface";
-// Title组件的配置
+export * from './interface'
+
+// Title 组件的配置
 export default {
-  title: "输入框",
-  type: "questionTitle",
+  title: '标题',
+  type: 'questionTitle', // 要和后端统一好
   Component,
   PropComponent,
   defaultProps: QuestionTitleDefaultProps,
-};
+}

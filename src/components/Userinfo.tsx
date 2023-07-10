@@ -1,33 +1,33 @@
-import { FC } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { LOGIN_PATHNAME } from "../router";
-import { UserOutlined } from "@ant-design/icons";
-import { Button, message } from "antd";
-import { removeToken } from "../utils/cache";
-import useGetUserInfo from "../hooks/useGetUserInfo";
-import { useDispatch } from "react-redux";
-import { logoutReducer } from "../store/userReducer";
+import React, { FC } from 'react'
+import { Button, message } from 'antd'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserOutlined } from '@ant-design/icons'
+import { useDispatch } from 'react-redux'
+// import { useRequest } from 'ahooks'
+import { LOGIN_PATHNAME } from '../router'
+// import { getUserInfoService } from '../services/user'
+import { removeToken } from '../utils/user-token'
+import useGetUserInfo from '../hooks/useGetUserInfo'
+import { logoutReducer } from '../store/userReducer'
 
-const Userinfo: FC = () => {
-  const { username, nickname } = useGetUserInfo();
+const UserInfo: FC = () => {
+  const nav = useNavigate()
+  const dispatch = useDispatch()
 
-  const dispatch = useDispatch();
-
-  const nav = useNavigate();
+  // const { data } = useRequest(getUserInfoService) // ajax
+  // const { username, nickname } = data || {}
+  const { username, nickname } = useGetUserInfo() // 从 redux 中获取用户信息
 
   function logout() {
-    // 清空redux的user数据
-    dispatch(logoutReducer);
-    // 清空token
-    removeToken();
-    message.success("退出成功");
-    // 跳转到登录页面
-    nav(LOGIN_PATHNAME);
+    dispatch(logoutReducer()) // 清空了 redux user 数据
+    removeToken() // 清除 token 的存储
+    message.success('退出成功')
+    nav(LOGIN_PATHNAME)
   }
 
   const UserInfo = (
     <>
-      <span style={{ color: "#e8e8e8" }}>
+      <span style={{ color: '#e8e8e8' }}>
         <UserOutlined />
         {nickname}
       </span>
@@ -35,16 +35,11 @@ const Userinfo: FC = () => {
         退出
       </Button>
     </>
-  );
+  )
 
-  const Login = (
-    <>
-      <Link to={LOGIN_PATHNAME}>登录</Link>
-    </>
-  );
+  const Login = <Link to={LOGIN_PATHNAME}>登录</Link>
 
-  // TODO 对于已经登录的用户，显示什么
-  return <div>{username ? UserInfo : Login}</div>;
-};
+  return <div>{username ? UserInfo : Login}</div>
+}
 
-export default Userinfo;
+export default UserInfo

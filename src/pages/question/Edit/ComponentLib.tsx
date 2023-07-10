@@ -1,62 +1,54 @@
-import React, { FC } from "react";
-import {
-  ComponentConfType,
-  componentConfGroup,
-} from "../../../components/QuestionComponents";
-import { Typography } from "antd";
-import styles from "./ComponentLib.module.scss";
-import { addComponent } from "../../../store/componentReducer";
-import { useDispatch } from "react-redux";
-import { nanoid } from "nanoid";
+import React, { FC, useCallback } from 'react'
+import { nanoid } from 'nanoid'
+import { Typography } from 'antd'
+import { useDispatch } from 'react-redux'
+import { componentConfGroup, ComponentConfType } from '../../../components/QuestionComponents'
+import { addComponent } from '../../../store/componentsReducer'
+import styles from './ComponentLib.module.scss'
 
-const { Title } = Typography;
+const { Title } = Typography
 
 function genComponent(c: ComponentConfType) {
-  const { title, type, Component, defaultProps } = c;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const dispatch = useDispatch();
+  const { title, type, Component, defaultProps } = c
+  const dispatch = useDispatch()
 
-  function handleClick() {
-    // TODO 新建组件有问题
+  const handleClick = useCallback(() => {
     dispatch(
       addComponent({
-        fe_id: nanoid(), // 前端生成的id
+        fe_id: nanoid(), // 前端生成的 id
         title,
         type,
         props: defaultProps,
       })
-    );
-  }
+    )
+  }, [])
 
   return (
-    <div key={title} className={styles.wrapper} onClick={handleClick}>
+    <div key={type} className={styles.wrapper} onClick={handleClick}>
       <div className={styles.component}>
         <Component />
       </div>
     </div>
-  );
+  )
 }
 
-const ComponentLib: FC = () => {
+const Lib: FC = () => {
   return (
     <>
       {componentConfGroup.map((group, index) => {
-        const { groupId, groupName, components } = group;
+        const { groupId, groupName, components } = group
 
         return (
           <div key={groupId}>
-            <Title
-              level={3}
-              style={{ fontSize: "16px", marginTop: index > 0 ? "20px" : "0" }}
-            >
+            <Title level={3} style={{ fontSize: '16px', marginTop: index > 0 ? '20px' : '0' }}>
               {groupName}
             </Title>
-            <div>{components.map((c) => genComponent(c))}</div>
+            <div>{components.map(c => genComponent(c))}</div>
           </div>
-        );
+        )
       })}
     </>
-  );
-};
+  )
+}
 
-export default ComponentLib;
+export default Lib
